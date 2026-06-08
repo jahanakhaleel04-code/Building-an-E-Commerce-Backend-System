@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 
-const authMiddleware = (req,res,next)=>{
+export const auth = (req,res,next)=>{
     const authHeader = req.headers.authorization;
     // console.log(authHeader)
     if(!authHeader || !authHeader.startsWith('Bearer ')){
@@ -23,4 +23,15 @@ const authMiddleware = (req,res,next)=>{
    }
     
 }
-export default authMiddleware;
+export const isAdmin = (role) => {
+    return (req, res, next) => {
+        console.log(req.user)
+        if (req.user && req.user.role === role) {
+            next();
+        } else {
+            return res.status(403).json({
+                message: 'Forbidden: Admin access only'
+            });
+        }
+    };
+};

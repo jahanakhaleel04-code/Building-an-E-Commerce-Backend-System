@@ -34,10 +34,10 @@ export const register = async (req, res) => {
         });
         // const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' })
         // console.log(process.env.JWT_SECRET + '.......' + token);
-        return res.status(201).json({ user, token });
+        return res.status(201).json({ user });
 
     } catch (e) {
-        
+        console.log(e)
         return res.status(400).json({
             message: 'Bad request'
         });
@@ -66,9 +66,9 @@ export const login = async (req, res) => {
             return res.status(400).json({
                 message: 'Invalid credentials'
             })
-        }console.log('verifiedPassword')
-        const token = jwt.sign({ id: user._id, email: email }, process.env.JWT_SECRET, { expiresIn: '1h' })
-        console.log(token)
+        }// console.log('verifiedPassword')
+        const token = jwt.sign({ id: user._id, email: email ,role:user.role}, process.env.JWT_SECRET, { expiresIn: '1h' })
+        // console.log(token)
         return res.status(200).json({ user, token });
     }
     catch (e) {
