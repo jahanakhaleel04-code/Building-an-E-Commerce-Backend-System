@@ -3,13 +3,13 @@ import { ProductModel } from "../models/product.js";
 
 export const userActivity = async (req, res) => {
     try {
-        const { userId, activityType , productId } = req.body;
+        const { action, productId } = req.body;
         const savedActivity = await UserActivityModel.create({
-            user: userId,
-            activityType,
+            user: req.user._id,
+             action,
             products: productId
         })
-        
+
         res.status(201).json({
             message: 'User activity recorded successfully',
             activity: savedActivity
@@ -19,6 +19,7 @@ export const userActivity = async (req, res) => {
     }
 }
 
+
 export const getRecommendations = async (req, res) => {
 
     try {
@@ -26,23 +27,26 @@ export const getRecommendations = async (req, res) => {
         const userId = req.user.id;
 
         const activities =
-        await UserActivityModel.find({
-            user: userId
-        }).populate('products');
+            await UserActivityModel.find({
+                user: userId
+            }).populate('products');
 
         const categories =
-        activities.map(
-            item => item.products.category
-        );
+            activities.map(
+                item => item.products.category
+            );
 
         const recommendedProducts =
-        await ProductModel.find({
+            await ProductModel.find({
 
-            category: {
-                $in: categories
-            }
+                category: {
+                    $in: categories
+                },
+                _id: {
+                    $nin: productIds
+                }
 
-        }).limit(5);
+            }).limit(5);
 
         res.status(200).json(
             recommendedProducts

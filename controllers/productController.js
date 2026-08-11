@@ -1,22 +1,56 @@
 import { ProductModel } from "../models/product.js";
+import cloudinary from "../config/cloudinary.js";
 
-export const createProduct = async (req, res) => {
+ export const createProduct = async (req, res) => {
     try {
-        const { name, price, category } = req.body;
-        const product = await ProductModel.create({
-            name, price, category
+        const { name, price, category } = req.body
+        console.log(req.body)
+        if (!req.file) {
+            return res.status(400).json({
+                message: "Product image is required"
+            })
+        }
+
+        const result = await new Promise((resolve, reject) => {
+
+            const stream = cloudinary.uploader.upload_stream(
+                {
+                    folder: "products"
+                },
+                (error, result) => {
+                    if (error) {
+                        reject(error)
+                    } else {
+                        resolve(result)
+                    }
+                }
+            )
+
+            stream.end(req.file.buffer)
         })
+
+        const product = await ProductModel.create({
+            name,
+            price,
+            category,
+            image: result.secure_url
+        })
+
         return res.status(201).json({
-            message: 'Product created successfully',
+            message: "Product created successfully",
             product
         })
-    }
-    catch (e) {
+
+    } catch (e) {
+
+        console.error(e)
+
         return res.status(400).json({
-            message: 'Bad request'
+            message: "Bad request"
         })
     }
 }
+ 
 
 export const getAllProducts = async (req, res) => {
     const { name , category , search , sort } = req.query;
@@ -38,8 +72,23 @@ export const getAllProducts = async (req, res) => {
     }
     // console.log(filter)
     //sort
-    const sortValue = sort === 'desc' ? -1 : 1; 
-    const products = await ProductModel.find(filter).sort({ price: sortValue })
+      let sortOption = {};
+
+        if (sort === "price_asc") {
+            sortOption.price = 1;
+        }
+        else if (sort === "price_desc") {
+            sortOption.price = -1;
+        }
+        else if (sort === "name_asc") {
+            sortOption.name = 1;
+        }
+        else if (sort === "name_desc") {
+            sortOption.name = -1;
+        }
+    const products = await ProductModel
+            .find(filter)
+            .sort(sortOption);
 
     
     if (products.length === 0) {

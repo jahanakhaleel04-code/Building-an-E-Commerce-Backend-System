@@ -9,8 +9,12 @@ import orderRoutes from "./routes/orderRoutes.js";
 import analyticsRoutes from "./routes/analyticsRoutes.js";
 
 dotenv.config();
+ 
 const app = express();
-
+ 
+app.use(cors({
+    origin: "http://localhost:5173",
+}));
 //middlewares
 app.use(express.json());
 
@@ -18,9 +22,9 @@ app.use(express.json());
 app.use('/api/users',userRoutes)
 app.use('/api/products',productRoutes)
 app.use('/api/orders',orderRoutes)
-app.use('/api/analytics',analyticsRoutes)
+app.use('/api/activities',analyticsRoutes)
 
-app.use(cors());
+
 
 //routes
 

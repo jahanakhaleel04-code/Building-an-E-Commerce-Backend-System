@@ -1,0 +1,4 @@
+_id,user,products,action
+ObjectId(6a7ad595f8032164a666a18e),ObjectId(6a758eff28cd950e5bb45ad3),ObjectId(6a7975d9b3e1d3ff719a5cbc),viewed
+ObjectId(6a7ad60af2d154c4eaa2989a),ObjectId(6a758eff28cd950e5bb45ad3),ObjectId(6a797540b3e1d3ff719a5cba),viewed
+ObjectId(6a7ad617f2d154c4eaa2989b),ObjectId(6a758eff28cd950e5bb45ad3),ObjectId(6a7974a3b3e1d3ff719a5cb8),viewed
